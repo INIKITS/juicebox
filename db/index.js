@@ -223,9 +223,6 @@ async function createTags(tagList) {
     `,
       tagList
     );
-    console.log("pooo", { rows });
-
-    console.log("rows", rows);
 
     return rows;
   } catch (error) {
@@ -236,6 +233,18 @@ async function createTags(tagList) {
   // returning nothing, we'll query after
   // select all tags where the name is in our taglist
   // return the rows from the query
+}
+
+async function getAllTags() {
+  try {
+    const { rows } = await client.query(`
+    SELECT * FROM tags;
+    `);
+
+    return rows;
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function createPostTag(postId, tagId) {
@@ -339,6 +348,7 @@ module.exports = {
   createUser,
   updateUser,
   getAllPosts,
+  getAllTags,
   createPost,
   updatePost,
   getPostsByUser,
