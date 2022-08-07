@@ -164,7 +164,6 @@ async function getAllPosts() {
       postIds.map((post) => getPostById(post.id))
     );
 
-    console.log("posts get all ", posts);
     return posts;
   } catch (error) {
     throw error;
@@ -211,7 +210,6 @@ async function createTags(tagList) {
   if (tagList.length === 0) {
     return;
   }
-  console.log("tagList", tagList);
   // need something like: $1), ($2), ($3
   const insertValues = tagList.map((_, index) => `$${index + 1}`).join("), (");
   // then we can use: (${ insertValues }) in our string template
@@ -220,8 +218,6 @@ async function createTags(tagList) {
   const selectValues = tagList.map((_, index) => `$${index + 1}`).join(", ");
   // then we can use (${ selectValues }) in our string template
 
-  console.log("insertValues", insertValues);
-  console.log("selectValues", selectValues);
   try {
     await client.query(
       `
@@ -306,6 +302,13 @@ async function getPostById(postId) {
       [postId]
     );
 
+    if (!post) {
+      throw {
+        name: "PostNotFoundError",
+        message: "Could not find a post with that postId",
+      };
+    }
+
     const { rows: tags } = await client.query(
       `
         SELECT tags.*
@@ -315,8 +318,6 @@ async function getPostById(postId) {
       `,
       [postId]
     );
-
-    console.log("made it to this pwetggre");
 
     const {
       rows: [author],
@@ -373,5 +374,6 @@ module.exports = {
   createTags,
   addTagsToPost,
   getPostsByTagName,
+  getPostById,
   getUserByUsername,
 };
