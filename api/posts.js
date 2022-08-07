@@ -14,7 +14,7 @@ postsRouter.get("/", async (req, res) => {
     posts,
   });
 });
-s
+
 postsRouter.post("/", requireUser, async (req, res, next) => {
   const { title, content, tags = "" } = req.body;
 
