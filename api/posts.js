@@ -4,6 +4,17 @@ const postsRouter = express.Router();
 const { requireUser } = require("./utils");
 const { getAllPosts, createPost, updatePost, getPostById } = require("../db");
 
+postsRouter.get("/", async (req, res) => {
+  const allPosts = await getAllPosts();
+  const posts = allPosts.filter((post) => {
+    return post.active || (req.user && post.author.id === req.user.id);
+  });
+
+  res.send({
+    posts,
+  });
+});
+s
 postsRouter.post("/", requireUser, async (req, res, next) => {
   const { title, content, tags = "" } = req.body;
 
@@ -67,17 +78,6 @@ postsRouter.patch("/:postId", requireUser, async (req, res, next) => {
   }
 });
 
-postsRouter.get("/", async (req, res) => {
-  const allPosts = await getAllPosts();
-  const posts = allPosts.filter((post) => {
-    return post.active || (req.user && post.author.id === req.user.id);
-  });
-
-  res.send({
-    posts,
-  });
-});
-
 postsRouter.use((req, res, next) => {
   console.log("A request is being made to /posts");
 
@@ -109,12 +109,6 @@ postsRouter.delete("/:postId", requireUser, async (req, res, next) => {
   } catch ({ name, message }) {
     next({ name, message });
   }
-});
-
-postsRouter.get("/", (req, res) => {
-  res.send({
-    posts: [],
-  });
 });
 
 module.exports = postsRouter;
