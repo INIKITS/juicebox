@@ -68,6 +68,7 @@ postsRouter.patch("/:postId", requireUser, async (req, res, next) => {
 });
 
 postsRouter.get("/", async (req, res) => {
+  const allPosts = await getAllPosts();
   const posts = allPosts.filter((post) => {
     return post.active || (req.user && post.author.id === req.user.id);
   });
